@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Servicio de RabbitMQ
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"  # Puerto de administración web
+      - "5672:5672"    # Puerto AMQP para comunicación con otros servicios
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  # Servicio de visión
+  vision-service:
+    build: .
+    container_name: vision-service
+    ports:
+      - "8000:8000"  # Exponer FastAPI en puerto 8000
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq  # Usamos el nombre del servicio RabbitMQ como host
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
