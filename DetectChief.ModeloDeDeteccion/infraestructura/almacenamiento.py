@@ -4,11 +4,10 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
-SUPABASE_URL_ALMACENAMIENTO = os.getenv("SUPABASE_URL_ALMACENAMIENTO")
-SUPABASE_KEY= os.getenv("SUPABASE_KEY")
+SUPABASE_URL_ALMACENAMIENTO = os.getenv("SUPABASE_URL_ALMACENAMIENTO")  # ej. https://<subdominio>.supabase.co
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def guardar_imagen_storage(id_camara: int, timestamp: str, image_bytes: bytes):
     bucket_name = "detectchief"
@@ -31,11 +30,13 @@ def guardar_imagen_storage(id_camara: int, timestamp: str, image_bytes: bytes):
         "Content-Type": "image/jpeg",
     }
 
+    # 4. URL para subir el archivo
     upload_url = f"{SUPABASE_URL_ALMACENAMIENTO}/object/{bucket_name}/{archivo_nombre}"
 
     response = requests.put(upload_url, headers=headers, data=image_bytes)
 
     if response.status_code == 200:
-        return f"{SUPABASE_URL_ALMACENAMIENTO}/{bucket_name}/{archivo_nombre}"
+        # 5. Retornar URL pública accesible
+        return f"{SUPABASE_URL_ALMACENAMIENTO}/object/public/{bucket_name}/{archivo_nombre}"
     else:
         raise Exception(f"Error al guardar la imagen: {response.text}")

@@ -23,9 +23,9 @@ def obtener_conexion_rabbitmq():
         connection = pika.BlockingConnection(params)
         channel = connection.channel()
 
-        # Declarar cola durable
+        
         channel.queue_declare(queue='predicciones', durable=True)
-        return channel, connection  # Devolver también la conexión
+        return channel, connection 
 
     except Exception as e:
         print(f"❌ Error al conectar a RabbitMQ: {str(e)}")

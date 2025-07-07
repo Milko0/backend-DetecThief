@@ -54,3 +54,37 @@ class IncidenteRepositorio(BaseRepositorio):
         finally:
             if conn:
                 self.connection_pool.putconn(conn)
+
+    def obtener_historial_activos(self) -> list[dict]:
+        conn = self.connection_pool.getconn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT id, comentario AS descripcion, evidencia_referencial AS imagen_referencia, tipo_incidente_id
+                    FROM historial_incidentes
+                    WHERE estado_sistema = 'activo'
+                """)
+                rows = cur.fetchall()
+                return [
+                    {
+                        "id": r[0],
+                        "descripcion": r[1],
+                        "imagen_referencia": r[2],
+                        "tipo_incidente_id": r[3]
+                    } for r in rows
+                ]
+        finally:
+            self.connection_pool.putconn(conn)
+
+    def marcar_historial_confirmado(self, historial_id: int):
+        conn = self.connection_pool.getconn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE historial_incidentes
+                    SET estado_sistema = 'confirmado'
+                    WHERE id = %s
+                """, (historial_id,))
+                conn.commit()
+        finally:
+            self.connection_pool.putconn(conn)

@@ -45,6 +45,7 @@ class RegistrarIncidenteService:
 
     def _publicar_notificacion(self, incidente_id: int, datos_originales: dict, tipo_id: int, descripcion: str):
         mensaje = {
+            
             "incidente_id": incidente_id,
             "camara_id": datos_originales["id_camara"],
             "tipo_incidente_id": tipo_id,
