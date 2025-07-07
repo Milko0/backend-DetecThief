@@ -14,7 +14,7 @@ public class CameraMapper {
         camera.setDescription(dto.description());
         camera.setLocation(dto.location());
         camera.setUrlStream(dto.urlStream());
-        camera.setStatus("Activo");
+        camera.setStatus("activo");
         //camera.setCreatedAt(java.time.LocalDateTime.now());
         //camera.setUpdatedAt(java.time.LocalDateTime.now());
         return camera;

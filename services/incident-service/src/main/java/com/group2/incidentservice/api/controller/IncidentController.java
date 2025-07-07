@@ -122,7 +122,7 @@ public class IncidentController {
     }
 
     @GetMapping("/historial/{id}/with-type")
-    public ResponseEntity<HistorialIncidenteWithTypeDTO> getHistorialIncidenteWithTypeById(@PathVariable Integer id) {
+    public ResponseEntity<HistorgtiialIncidenteWithTypeDTO> getHistorialIncidenteWithTypeById(@PathVariable Integer id) {
         HistorialIncidenteWithTypeDTO historial = incidentService.getHistorialIncidenteWithTypeById(id);
         return ResponseEntity.ok(historial);
     }
