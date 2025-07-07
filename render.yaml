@@ -1,0 +1,71 @@
+services:
+  - name: DemonioRegistroIncidentes
+    type: worker
+    runtime: python
+    rootDir: DemonioRegistroIncidentes
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    plan: free
+    envVars:
+      - key: RABBITMQ_URL
+        value: amqps://deulqtcd:xZsewdwoZcrYZWE7hhmZFpy9JA-ujQJG@chimpanzee.rmq.cloudamqp.com/deulqtcd
+      - key: RABBITMQ_QUEUE_INCIDENTES
+        value: predicciones
+      - key: DB_HOST
+        value: aws-0-us-east-1.pooler.supabase.com
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        value: postgres.yvqpmfzdpzdrtczkcupv
+      - key: DB_PASSWORD
+        value: TendenciasGRUPO2
+      - key: DB_PORT
+        value: 6543
+
+  - name: DetectChief-ModeloDeDeteccion
+    type: web
+    runtime: python
+    rootDir: DetectChief.ModeloDeDeteccion
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    plan: free
+    envVars:
+      - key: RABBITMQ_URL
+        value: amqps://deulqtcd:xZsewdwoZcrYZWE7hhmZFpy9JA-ujQJG@chimpanzee.rmq.cloudamqp.com/deulqtcd
+      - key: SUPABASE_URL
+        value: https://yvqpmfzdpzdrtczkcupv.supabase.co
+      - key: SUPABASE_API_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cXBtZnpkcHpkcnRjemtjdXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxNjA5NjgsImV4cCI6MjA2MTczNjk2OH0.tlzDQwqOKYqQTCxKDb_mHn-tfizkBE7RnAnG_7z0l_o
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cXBtZnpkcHpkcnRjemtjdXB2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjE2MDk2OCwiZXhwIjoyMDYxNzM2OTY4fQ.cuyBHnl2cccazegqDLJeyHfUxviwFBy-I0wdfvi_EGY
+      - key: SUPABASE_URL_ALMACENAMIENTO
+        value: https://yvqpmfzdpzdrtczkcupv.supabase.co/storage/v1
+
+  - name: DemonioNotificador
+    type: worker
+    runtime: python
+    rootDir: DemonioNotificador
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    plan: free
+    envVars:
+      - key: RABBITMQ_URL
+        value: amqps://deulqtcd:xZsewdwoZcrYZWE7hhmZFpy9JA-ujQJG@chimpanzee.rmq.cloudamqp.com/deulqtcd
+      - key: RABBITMQ_QUEUE_INCIDENTES
+        value: predicciones
+      - key: DB_HOST
+        value: aws-0-us-east-1.pooler.supabase.com
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        value: postgres.yvqpmfzdpzdrtczkcupv
+      - key: DB_PASSWORD
+        value: TendenciasGRUPO2
+      - key: DB_PORT
+        value: 6543
+      - key: TELEGRAM_BOT_TOKEN
+        value: 7681504246:AAGjYRt5iEd3AppoCWh5ftgcQVpTm1MJ1p4
+      - key: BREVO_API_KEY
+        value: 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
+      - key: EMAIL_SENDER
+        value: antoniz2601@gmail.com
