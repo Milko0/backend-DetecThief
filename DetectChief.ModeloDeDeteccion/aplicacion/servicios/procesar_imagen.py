@@ -53,32 +53,32 @@ async def procesar_imagen(id_camara: int, timestamp: str, file: UploadFile):
     img.save(img_byte_arr, format='JPEG')
     img_byte_arr = img_byte_arr.getvalue()
 
-    # Obtener la URL de ngrok (asegúrate de que obtener_ngrok_url() devuelve el endpoint correcto)
-    ngrok_url =  obtener_ngrok_url()  
+    # Obtener la URL de ngrok
+    ngrok_url = obtener_ngrok_url()  
     
     try:
-        # Hacer la solicitud al endpoint de predicción
+        # Llamar al modelo
         response = requests.post(
             f"{ngrok_url}/predecir",
             files={"file": ("image.jpg", img_byte_arr, "image/jpeg")}
         )
-        response.raise_for_status()  # Lanza error si la solicitud falla
+        response.raise_for_status()
         pred_label = response.json().get("prediccion")
 
-        # Filtrar por clases relevantes (ajusta "ClaseRelevante" según tu necesidad)
-        if pred_label != "Normal Videos":
-            # Guardar imagen en Supabase Storage
-            image_url = guardar_imagen_storage(id_camara, timestamp, image_bytes)
-            
-            # Publicar en RabbitMQ
-            mensaje = {
-                "id_camara": id_camara,
-                "timestamp": timestamp,
-                "prediccion": pred_label,
-                "image_url": image_url
-            }
-            publicar_en_rabbitmq(mensaje)
-        
+        # ❌ Si es un video normal, no publicar ni guardar
+        if pred_label.strip().lower().replace(" ", "") == "normalvideos":
+            print("[ℹ️] Detección normal, no se enviará a la cola.")
+            return pred_label
+
+        # ✅ Si no es normal, guardar y publicar
+        image_url = guardar_imagen_storage(id_camara, timestamp, image_bytes)
+        mensaje = {
+            "id_camara": id_camara,
+            "timestamp": timestamp,
+            "prediccion": pred_label,
+            "image_url": image_url
+        }
+        publicar_en_rabbitmq(mensaje)
         return pred_label
 
     except Exception as e:
