@@ -1,6 +1,6 @@
 services:
   - name: DemonioRegistroIncidentes
-    type: worker
+    type: web
     runtime: python
     rootDir: DemonioRegistroIncidentes
     buildCommand: pip install -r requirements.txt
@@ -42,7 +42,7 @@ services:
         value: https://yvqpmfzdpzdrtczkcupv.supabase.co/storage/v1
 
   - name: DemonioNotificador
-    type: worker
+    type: web
     runtime: python
     rootDir: DemonioNotificador
     buildCommand: pip install -r requirements.txt
