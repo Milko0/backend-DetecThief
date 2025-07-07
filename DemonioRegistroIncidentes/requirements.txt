@@ -2,3 +2,5 @@ kombu
 python-dotenv
 psycopg2-binary
 pika
+fastapi
+uvicorn[standard]
