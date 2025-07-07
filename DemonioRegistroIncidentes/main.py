@@ -1,8 +1,20 @@
-# demonio_registro_incidentes/main.py
-
 import threading
 from infraestructura.mensajeria.consumidor_rabbitmq import ConsumidorRabbitMQ
 from aplicacion.servicios.validador_incidentes import NotificadorOperador
+
+# 🔧 Agregamos FastAPI para exponer puerto y evitar que Render apague el servicio
+from fastapi import FastAPI
+import uvicorn
+from threading import Thread
+
+def iniciar_servidor_estado():
+    app = FastAPI()
+
+    @app.get("/estado")
+    def estado():
+        return {"status": "ok"}
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 def iniciar_consumidor():
     consumidor = ConsumidorRabbitMQ()
@@ -14,6 +26,10 @@ def iniciar_notificador():
 
 if __name__ == "__main__":
     print("[🔥] Iniciando demonio de registro de incidentes...")
+
+    # Iniciar mini servidor HTTP de estado para mantener el puerto abierto
+    servidor = Thread(target=iniciar_servidor_estado, daemon=True)
+    servidor.start()
 
     # Hilo para escuchar RabbitMQ (supervisor)
     hilo_consumidor = threading.Thread(target=iniciar_consumidor, daemon=True)
